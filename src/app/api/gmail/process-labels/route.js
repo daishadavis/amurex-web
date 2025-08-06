@@ -226,12 +226,23 @@ async function generateEmbeddings(text) {
 
     // Truncate text if it's too long (Mistral has token limits)
     const truncatedText = text.length > 8000 ? text.substring(0, 8000) : text;
+    const misttralApiKey = process.env.MISTRAL_API_KEY || ''
 
-    const response = await mistral.embeddings.create({
-      model: "mistral-embed",
-      input: truncatedText,
-    });
-
+    let response;
+    if (misttralApiKey?.length == 0) {
+      response = await fetch("/api/embed", {
+        method: "GET",
+        body: JSON.stringify({text: truncatedText}),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } else {
+      response = await mistral.embeddings.create({
+        model: "mistral-embed",
+        input: truncatedText,
+      });
+    }
     if (
       response &&
       response.data &&
@@ -243,6 +254,7 @@ async function generateEmbeddings(text) {
       console.error("Invalid embedding response structure:", response);
       return null;
     }
+
   } catch (error) {
     console.error("Error generating embeddings:", error);
     return null;

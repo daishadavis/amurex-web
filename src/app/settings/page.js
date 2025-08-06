@@ -300,7 +300,7 @@ function SettingsContent() {
         const { data: user, error } = await supabase
           .from("users")
           .select(
-            "notion_connected, omi_connected, google_docs_connected, calendar_connected, memory_enabled, analytics_enabled, email, created_at, email_tagging_enabled, emails_enabled"
+            "notion_connected, google_docs_connected, omi_connected, calendar_connected, memory_enabled, email, created_at, email_tagging_enabled, emails_enabled"
           )
           .eq("id", session.user.id)
           .single();
